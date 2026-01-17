@@ -8,6 +8,8 @@ import (
 	"os"
 
 	githubEnums "discus.TelegramAlert/enum"
+	"discus.TelegramAlert/models"
+	"discus.TelegramAlert/telegram"
 )
 
 type Response struct {
@@ -37,25 +39,52 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 
 	eventType := githubEnums.GitHubEvent(r.Header.Get("x-github-event"))
 
-	if eventType == githubEnums.DISCUSSION {
-		//telegram.SendMessage(fmt.Sprintf(LANG_NEW_DISCUSSION))
-	}
-
-	if eventType == githubEnums.DISCUSSION_COMMENT {
-
-	}
-
-	var payload map[string]interface{}
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	var body models.GitHubWebhook
+	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 		return
 	}
 
-	// Lower is test
-	prettyJSON, _ := json.MarshalIndent(payload, "", "  ")
-	fmt.Println("eventType:", eventType)
-	fmt.Printf("Received Webhook:\n%s\n", string(prettyJSON))
+	switch eventType {
+	case githubEnums.DISCUSSION:
+		switch githubEnums.GitHubAction(body.Action) {
+		case githubEnums.CREATED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_NEW_DISCUSSION,
+				body.Discussion.User.Login,
+				body.Discussion.Title,
+				body.Discussion.HTMLURL))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
+		case githubEnums.EDITED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_EDITED_DISCUSSION,
+				body.Discussion.User.Login,
+				body.Discussion.Title,
+				body.Discussion.HTMLURL))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
+		}
+	case githubEnums.DISCUSSION_COMMENT:
+		switch githubEnums.GitHubAction(body.Action) {
+		case githubEnums.CREATED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_NEW_DISCUSSION_COMMENT,
+				body.Comment.User,
+				body.Comment.Body,
+				body.Comment.HTMLURL))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
+		}
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 

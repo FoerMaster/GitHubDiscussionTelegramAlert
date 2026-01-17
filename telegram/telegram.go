@@ -14,6 +14,7 @@ func SendMessage(messageText string) error {
 	data := url.Values{}
 	data.Set("chat_id", os.Getenv("TELEGRAM_USERID"))
 	data.Set("text", messageText)
+	data.Set("parse_mode", "MarkdownV2")
 
 	resp, err := http.PostForm(apiURL, data)
 	if err != nil {
