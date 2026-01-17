@@ -12,9 +12,9 @@ import (
 	"os"
 	"strings"
 
-	githubEnums "discus.TelegramAlert/enum"
-	"discus.TelegramAlert/models"
-	"discus.TelegramAlert/telegram"
+	githubEnums "github.com/FoerMaster/GitHubDiscussionTelegramAlert/enum"
+	"github.com/FoerMaster/GitHubDiscussionTelegramAlert/models"
+	"github.com/FoerMaster/GitHubDiscussionTelegramAlert/telegram"
 )
 
 type Response struct {
