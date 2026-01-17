@@ -107,6 +107,17 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
 				return
 			}
+		case githubEnums.EDITED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_EDITED_DISCUSSION_COMMENT,
+				body.Comment.User.Login,
+				body.Discussion.Title,
+				body.Comment.HTMLURL,
+				body.Comment.Body))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
 		}
 	}
 
