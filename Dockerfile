@@ -9,8 +9,6 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/bin/telegram-alert
 
-ENV PORT=8080
-
-EXPOSE ${PORT}
+EXPOSE 8080
 
 CMD ["/app/bin/telegram-alert"]

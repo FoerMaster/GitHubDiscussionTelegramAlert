@@ -10,6 +10,24 @@ import (
 	githubEnums "discus.TelegramAlert/enum"
 )
 
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+func processHealth(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err := json.NewEncoder(w).Encode(Response{
+		Status:  "ok",
+		Message: "Success!",
+	})
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
 func processGitHub(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
@@ -35,25 +53,20 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Lower is test
-
-	// 2. Pretty-print the JSON to the console
 	prettyJSON, _ := json.MarshalIndent(payload, "", "  ")
 	fmt.Println("eventType:", eventType)
 	fmt.Printf("Received Webhook:\n%s\n", string(prettyJSON))
-
-	// 3. Respond to GitHub
 	w.WriteHeader(http.StatusOK)
 }
 
 func main() {
-	// Register the handler function for the "/items" path
 	http.HandleFunc("/webhook/github", processGitHub)
+	http.HandleFunc("/health", processHealth)
 
 	httpPort := os.Getenv("PORT")
 	if httpPort == "" {
 		httpPort = "8080"
 	}
-
 	fmt.Printf("Server listening on port %s...\n", httpPort)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", httpPort), nil); err != nil {
 		log.Fatal(err)
