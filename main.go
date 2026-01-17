@@ -54,7 +54,8 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				LANG_NEW_DISCUSSION,
 				body.Discussion.User.Login,
 				body.Discussion.Title,
-				body.Discussion.HTMLURL))
+				body.Discussion.HTMLURL,
+				body.Discussion.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
 				return
@@ -64,7 +65,19 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				LANG_EDITED_DISCUSSION,
 				body.Discussion.User.Login,
 				body.Discussion.Title,
-				body.Discussion.HTMLURL))
+				body.Discussion.HTMLURL,
+				body.Discussion.Body))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
+		case githubEnums.DELETED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_DELETED_DISCUSSION,
+				body.Discussion.User.Login,
+				body.Discussion.Title,
+				body.Discussion.HTMLURL,
+				body.Discussion.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
 				return
@@ -75,9 +88,21 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.CREATED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_NEW_DISCUSSION_COMMENT,
-				body.Comment.User,
-				body.Comment.Body,
-				body.Comment.HTMLURL))
+				body.Comment.User.Login,
+				body.Discussion.Title,
+				body.Comment.HTMLURL,
+				body.Comment.Body))
+			if err != nil {
+				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				return
+			}
+		case githubEnums.DELETED:
+			err := telegram.SendMessage(fmt.Sprintf(
+				LANG_DELETED_DISCUSSION_COMMENT,
+				body.Comment.User.Login,
+				body.Discussion.Title,
+				body.Comment.HTMLURL,
+				body.Comment.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
 				return
