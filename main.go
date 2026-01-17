@@ -76,8 +76,9 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 	eventType := githubEnums.GitHubEvent(r.Header.Get("x-github-event"))
 
 	var body models.GitHubWebhook
-	errBody := json.NewDecoder(r.Body).Decode(&body)
-	if errBody != nil {
+	err = json.Unmarshal(bodyBytes, &body)
+	if err != nil {
+		log.Printf("Error parsing JSON: %v", err)
 		http.Error(w, "Error parsing JSON", http.StatusBadRequest)
 		return
 	}
