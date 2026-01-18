@@ -113,7 +113,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.EDITED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_EDITED_DISCUSSION,
-				escapeTelegramMarkdownV2(body.Discussion.User.Login),
+				escapeTelegramMarkdownV2(body.Sender.Login),
 				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
 				escapeTelegramMarkdownV2(body.Discussion.Body)))
@@ -138,7 +138,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.CREATED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_NEW_DISCUSSION_COMMENT,
-				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Sender.Login),
 				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Comment.HTMLURL,
 				escapeTelegramMarkdownV2(body.Comment.Body)))
@@ -149,7 +149,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.DELETED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_DELETED_DISCUSSION_COMMENT,
-				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Sender.Login),
 				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
 				escapeTelegramMarkdownV2(body.Comment.Body)))
@@ -160,7 +160,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.EDITED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_EDITED_DISCUSSION_COMMENT,
-				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Sender.Login),
 				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Comment.HTMLURL,
 				escapeTelegramMarkdownV2(body.Comment.Body)))
