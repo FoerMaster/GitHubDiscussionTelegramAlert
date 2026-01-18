@@ -3,6 +3,7 @@ package telegram
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,13 +19,13 @@ func SendMessage(messageText string) error {
 
 	resp, err := http.PostForm(apiURL, data)
 	if err != nil {
-		return fmt.Errorf("HTTP request failed: %w", err)
+		log.Printf("HTTP request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("Telegram API error: %s (Status: %d)", string(bodyBytes), resp.StatusCode)
+		log.Printf("Telegram API error: %s (Status: %d)", string(bodyBytes), resp.StatusCode)
 	}
 
 	return nil
