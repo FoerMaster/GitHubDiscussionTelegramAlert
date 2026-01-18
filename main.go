@@ -95,6 +95,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				body.Discussion.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.EDITED:
@@ -106,6 +107,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				body.Discussion.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.DELETED:
@@ -117,6 +119,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				body.Discussion.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		}
@@ -131,6 +134,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				body.Comment.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.DELETED:
@@ -138,10 +142,11 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				LANG_DELETED_DISCUSSION_COMMENT,
 				body.Comment.User.Login,
 				body.Discussion.Title,
-				body.Comment.HTMLURL,
+				body.Discussion.HTMLURL,
 				body.Comment.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.EDITED:
@@ -153,6 +158,7 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 				body.Comment.Body))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
+				fmt.Printf("Error: %v", err)
 				return
 			}
 		}
