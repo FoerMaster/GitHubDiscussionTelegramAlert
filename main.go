@@ -22,6 +22,19 @@ type Response struct {
 	Message string `json:"message"`
 }
 
+func escapeTelegramMarkdownV2(text string) string {
+	specialChars := []string{
+		"_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!",
+	}
+
+	result := text
+	for _, char := range specialChars {
+		result = strings.ReplaceAll(result, char, "\\"+char)
+	}
+
+	return result
+}
+
 func validateGitHubSignature(signature string, body []byte) bool {
 	if signature == "" {
 		return false
@@ -89,37 +102,34 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.CREATED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_NEW_DISCUSSION,
-				body.Discussion.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Discussion.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
-				body.Discussion.Body))
+				escapeTelegramMarkdownV2(body.Discussion.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.EDITED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_EDITED_DISCUSSION,
-				body.Discussion.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Discussion.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
-				body.Discussion.Body))
+				escapeTelegramMarkdownV2(body.Discussion.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.DELETED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_DELETED_DISCUSSION,
-				body.Discussion.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Discussion.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
-				body.Discussion.Body))
+				escapeTelegramMarkdownV2(body.Discussion.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		}
@@ -128,37 +138,34 @@ func processGitHub(w http.ResponseWriter, r *http.Request) {
 		case githubEnums.CREATED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_NEW_DISCUSSION_COMMENT,
-				body.Comment.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Comment.HTMLURL,
-				body.Comment.Body))
+				escapeTelegramMarkdownV2(body.Comment.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.DELETED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_DELETED_DISCUSSION_COMMENT,
-				body.Comment.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Discussion.HTMLURL,
-				body.Comment.Body))
+				escapeTelegramMarkdownV2(body.Comment.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		case githubEnums.EDITED:
 			err := telegram.SendMessage(fmt.Sprintf(
 				LANG_EDITED_DISCUSSION_COMMENT,
-				body.Comment.User.Login,
-				body.Discussion.Title,
+				escapeTelegramMarkdownV2(body.Comment.User.Login),
+				escapeTelegramMarkdownV2(body.Discussion.Title),
 				body.Comment.HTMLURL,
-				body.Comment.Body))
+				escapeTelegramMarkdownV2(body.Comment.Body)))
 			if err != nil {
 				http.Error(w, "Failed send telegram message", http.StatusBadRequest)
-				fmt.Printf("Error: %v", err)
 				return
 			}
 		}
